@@ -50,10 +50,33 @@ hp.write_map("mask.fits",mask,overwrite=True)
 masked_map =  hp.ma(Sc)
 masked_map.mask = np.logical_not(mask)
 
-hp.mollview(masked_map, norm="hist", title ="Masked map")
+hp.mollview(masked_map, norm="hist", title ="Masked map highest freq")
 plt.savefig("./masked_map.jpg")
 plt.close()
 
 # write the masked map
 hp.write_map("masked_map.fits", masked_map,overwrite=True)
+
+# create a mask using the map of lower freq
+tresh = 0.01
+maplowfreq = hp.read_map("./MyMap_NoDP_Smooth_Degraded_100.fits")
+std_maplowfreq = np.std(maplowfreq)
+mask_low = maplowfreq < tresh*std_maplowfreq
+
+hp.mollview(mask_low, norm="hist", title ="Mask with map of lowest freq")
+plt.savefig("./mask_lowestfreq.jpg")
+
+# write the map of the mask
+hp.write_map("mask_lowestfreq.fits",mask_low,overwrite=True)
+
+# create the masked map
+masked_map_low =  hp.ma(Sc)
+masked_map_low.mask = np.logical_not(mask_low)
+
+hp.mollview(masked_map_low, norm="hist", title ="Masked map lowest freq")
+plt.savefig("./masked_map_lowestfreqmask.jpg")
+plt.close()
+
+# write the masked map
+hp.write_map("masked_map_lowestfreq.fits", masked_map,overwrite=True)
 
